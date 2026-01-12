@@ -11,12 +11,13 @@ import { cn } from "../lib/utils";
 import { useState } from "react";
 import { ThemeToggle } from "../components/ui/ThemeToggle";
 import { motion, AnimatePresence } from "framer-motion";
+import { useToast } from "../context/ToastContext";
 
 const sidebarItems = [
-  { icon: LayoutDashboard, label: "Dashboard", active: true },
-  { icon: PieChart, label: "Analytics", active: false },
-  { icon: Users, label: "Team", active: false },
-  { icon: Settings, label: "Settings", active: false },
+  { icon: LayoutDashboard, label: "Dashboard" },
+  { icon: PieChart, label: "Analytics" },
+  { icon: Users, label: "Team" },
+  { icon: Settings, label: "Settings" },
 ];
 
 export function Layout({ 
@@ -29,6 +30,25 @@ export function Layout({
   onViewChange: (view: string) => void;
 }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [searchValue, setSearchValue] = useState("");
+  const { addToast } = useToast();
+
+  const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && searchValue.trim()) {
+      addToast(`Searching for "${searchValue}"...`, "info");
+      setSearchValue("");
+    }
+  };
+
+  const handleNotificationClick = () => {
+    addToast("You have no new notifications", "info");
+  };
+
+  const handleProfileClick = () => {
+    onViewChange("Settings");
+    if (window.innerWidth < 768) setIsSidebarOpen(false);
+    addToast("Navigating to Profile Settings", "success");
+  };
 
   return (
     <div className="flex h-screen w-full bg-background overflow-hidden font-sans text-foreground">
@@ -75,7 +95,10 @@ export function Layout({
         </nav>
 
         <div className="p-4 border-t border-border/50">
-          <div className="flex items-center gap-3 p-3 rounded-xl bg-muted/50">
+          <button 
+            onClick={handleProfileClick}
+            className="w-full flex items-center gap-3 p-3 rounded-xl bg-muted/50 hover:bg-muted transition-colors text-left"
+          >
             <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-primary to-purple-500" />
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium truncate">Alex Morgan</p>
@@ -83,7 +106,7 @@ export function Layout({
                 alex@demo.com
               </p>
             </div>
-          </div>
+          </button>
         </div>
       </aside>
 
@@ -104,12 +127,18 @@ export function Layout({
             <input
               type="text"
               placeholder="Search analytics..."
+              value={searchValue}
+              onChange={(e) => setSearchValue(e.target.value)}
+              onKeyDown={handleSearch}
               className="flex-1 bg-transparent border-none outline-none px-3 text-sm placeholder:text-muted-foreground"
             />
           </div>
 
           <div className="flex items-center gap-3">
-            <button className="p-2 rounded-full hover:bg-muted relative">
+            <button 
+              onClick={handleNotificationClick}
+              className="p-2 rounded-full hover:bg-muted relative transition-colors"
+            >
               <Bell className="w-5 h-5 text-muted-foreground" />
               <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border border-background" />
             </button>
