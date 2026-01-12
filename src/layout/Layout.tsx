@@ -19,7 +19,15 @@ const sidebarItems = [
   { icon: Settings, label: "Settings", active: false },
 ];
 
-export function Layout({ children }: { children: React.ReactNode }) {
+export function Layout({ 
+  children,
+  currentView,
+  onViewChange
+}: { 
+  children: React.ReactNode;
+  currentView: string;
+  onViewChange: (view: string) => void;
+}) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
@@ -35,31 +43,35 @@ export function Layout({ children }: { children: React.ReactNode }) {
         </div>
 
         <nav className="flex-1 px-4 py-6 space-y-2">
-          {sidebarItems.map((item) => (
-            <button
-              key={item.label}
-              className={cn(
-                "w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group",
-                item.active
-                  ? "bg-primary/10 text-primary font-medium"
-                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
-              )}
-            >
-              <item.icon
+          {sidebarItems.map((item) => {
+            const isActive = item.label === currentView;
+            return (
+              <button
+                key={item.label}
+                onClick={() => onViewChange(item.label)}
                 className={cn(
-                  "w-5 h-5 transition-transform group-hover:scale-110",
-                  item.active ? "text-primary" : "text-muted-foreground"
+                  "w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group relative",
+                  isActive
+                    ? "bg-primary/10 text-primary font-medium"
+                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
                 )}
-              />
-              <span>{item.label}</span>
-              {item.active && (
-                <motion.div
-                  layoutId="active-pill"
-                  className="absolute left-0 w-1 h-8 bg-primary rounded-r-full"
+              >
+                <item.icon
+                  className={cn(
+                    "w-5 h-5 transition-transform group-hover:scale-110",
+                    isActive ? "text-primary" : "text-muted-foreground"
+                  )}
                 />
-              )}
-            </button>
-          ))}
+                <span>{item.label}</span>
+                {isActive && (
+                  <motion.div
+                    layoutId="active-pill"
+                    className="absolute left-0 w-1 h-8 bg-primary rounded-r-full"
+                  />
+                )}
+              </button>
+            );
+          })}
         </nav>
 
         <div className="p-4 border-t border-border/50">
@@ -141,20 +153,27 @@ export function Layout({ children }: { children: React.ReactNode }) {
                   <span className="text-xl font-bold">Analytics</span>
                 </div>
                  <nav className="space-y-2">
-                  {sidebarItems.map((item) => (
-                    <button
-                      key={item.label}
-                      className={cn(
-                        "w-full flex items-center gap-3 px-4 py-3 rounded-xl",
-                        item.active
-                          ? "bg-primary/10 text-primary font-medium"
-                          : "text-muted-foreground hover:bg-muted"
-                      )}
-                    >
-                      <item.icon className="w-5 h-5" />
-                      <span>{item.label}</span>
-                    </button>
-                  ))}
+                  {sidebarItems.map((item) => {
+                    const isActive = item.label === currentView;
+                    return (
+                      <button
+                        key={item.label}
+                        onClick={() => {
+                          onViewChange(item.label);
+                          setIsSidebarOpen(false);
+                        }}
+                        className={cn(
+                          "w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors",
+                          isActive
+                            ? "bg-primary/10 text-primary font-medium"
+                            : "text-muted-foreground hover:bg-muted"
+                        )}
+                      >
+                        <item.icon className="w-5 h-5" />
+                        <span>{item.label}</span>
+                      </button>
+                    );
+                  })}
                 </nav>
             </motion.aside>
           </>
