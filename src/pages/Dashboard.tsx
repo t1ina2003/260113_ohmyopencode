@@ -5,6 +5,7 @@ import { RevenueAreaChart } from "../components/charts/RevenueAreaChart";
 import { StatCard } from "../components/dashboard/StatCard";
 import { useRealtimeData } from "../hooks/useRealtimeData";
 import { motion } from "framer-motion";
+import { useToast } from "../context/ToastContext";
 
 const container = {
   hidden: { opacity: 0 },
@@ -18,6 +19,15 @@ const container = {
 
 export function Dashboard() {
   const { revenueData, activityData, categoryData, stats } = useRealtimeData();
+  const { addToast } = useToast();
+
+  const handleStatClick = (title: string) => {
+    addToast(`Filtering by ${title}...`, "info");
+  };
+
+  const handleTransactionClick = (company: string, amount: string) => {
+    addToast(`Opening transaction details for ${company} (${amount})`, "success");
+  };
 
   return (
     <motion.div 
@@ -47,6 +57,7 @@ export function Dashboard() {
           trend={12.5}
           icon={DollarSign}
           color="text-primary"
+          onClick={() => handleStatClick("Total Revenue")}
         />
         <StatCard
           title="Active Users"
@@ -55,6 +66,7 @@ export function Dashboard() {
           icon={Users}
           color="text-emerald-500"
           delay={0.1}
+          onClick={() => handleStatClick("Active Users")}
         />
         <StatCard
           title="Bounce Rate"
@@ -63,6 +75,7 @@ export function Dashboard() {
           icon={Activity}
           color="text-rose-500"
           delay={0.2}
+          onClick={() => handleStatClick("Bounce Rate")}
         />
         <StatCard
           title="New Signups"
@@ -71,6 +84,7 @@ export function Dashboard() {
           icon={MousePointer2}
           color="text-purple-500"
           delay={0.3}
+          onClick={() => handleStatClick("New Signups")}
         />
       </div>
 
@@ -98,20 +112,29 @@ export function Dashboard() {
              <p className="text-sm text-muted-foreground">Latest financial activity</p>
           </div>
           <div className="space-y-4">
-            {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="flex items-center justify-between p-3 rounded-xl hover:bg-muted/50 transition-colors">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
-                    {i % 2 === 0 ? "N" : "S"}
+            {[1, 2, 3, 4].map((i) => {
+              const company = i % 2 === 0 ? "Netflix" : "Spotify";
+              const amount = `-$${(10 * i).toFixed(2)}`;
+              
+              return (
+                <button 
+                  key={i} 
+                  onClick={() => handleTransactionClick(company, amount)}
+                  className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-muted/50 transition-colors text-left group"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold group-hover:scale-105 transition-transform">
+                      {i % 2 === 0 ? "N" : "S"}
+                    </div>
+                    <div>
+                      <p className="font-medium">Subscription {company}</p>
+                      <p className="text-xs text-muted-foreground">Today, 12:{30 + i} PM</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="font-medium">Subscription {i % 2 === 0 ? "Netflix" : "Spotify"}</p>
-                    <p className="text-xs text-muted-foreground">Today, 12:{30 + i} PM</p>
-                  </div>
-                </div>
-                <span className="font-semibold text-foreground">-${(10 * i).toFixed(2)}</span>
-              </div>
-            ))}
+                  <span className="font-semibold text-foreground">{amount}</span>
+                </button>
+              );
+            })}
           </div>
         </motion.div>
       </div>

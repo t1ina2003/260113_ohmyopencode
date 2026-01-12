@@ -9,6 +9,7 @@ interface StatCardProps {
   icon: LucideIcon;
   color?: string;
   delay?: number;
+  onClick?: () => void;
 }
 
 export function StatCard({
@@ -18,11 +19,21 @@ export function StatCard({
   icon: Icon,
   color = "text-primary",
   delay = 0,
+  onClick,
 }: StatCardProps) {
   return (
     <Card
-      className="hover:shadow-lg transition-all duration-300 hover:scale-[1.02] cursor-pointer group"
-      transition={{ delay }}
+      onClick={onClick}
+      className="hover:shadow-lg transition-shadow duration-300 cursor-pointer group"
+      whileHover={{ scale: 1.02 }}
+      whileTap={{ scale: 0.98 }}
+      transition={{
+        type: "spring",
+        stiffness: 400,
+        damping: 17,
+        delay,
+        scale: { type: "spring", stiffness: 400, damping: 17, delay: 0 },
+      }}
     >
       <div className="flex items-start justify-between mb-4">
         <div>
