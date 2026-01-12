@@ -1,0 +1,56 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Dependencies
+node_modules
+
+# Build output
+dist
+dist-ssr
+
+# Vite caches
+.vite
+vite.config.ts.timestamp-*
+
+# TypeScript incremental build cache
+*.tsbuildinfo
+
+# Lint caches
+.eslintcache
+
+# Test/coverage output (if added later)
+coverage
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Local overrides
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+
+# OS files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Visual Studio
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# Vim
+*.sw?
